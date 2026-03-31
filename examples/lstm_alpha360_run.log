@@ -1,0 +1,51 @@
+[91564:MainThread](2026-03-30 10:40:06,684) INFO - qlib.qrun - [run.py:78] - Render the template with the context: {}
+[91564:MainThread](2026-03-30 10:40:06,694) INFO - qlib.Initialization - [config.py:453] - default_conf: client.
+[91564:MainThread](2026-03-30 10:40:06,697) INFO - qlib.Initialization - [__init__.py:82] - qlib successfully initialized based on client settings.
+[91564:MainThread](2026-03-30 10:40:06,697) INFO - qlib.Initialization - [__init__.py:84] - data_path={'__DEFAULT_FREQ': PosixPath('/Users/syk/.qlib/qlib_data/cn_data')}
+/Users/syk/miniconda3/lib/python3.12/site-packages/mlflow/tracking/_tracking_service/utils.py:184: FutureWarning: The filesystem tracking backend (e.g., './mlruns') is deprecated as of February 2026. Consider transitioning to a database backend (e.g., 'sqlite:///mlflow.db') to take advantage of the latest MLflow features. See https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store for migration guidance.
+  return FileStore(store_uri, store_uri)
+[91564:MainThread](2026-03-30 10:40:06,713) INFO - qlib.workflow - [exp.py:258] - Experiment 706158807618320602 starts running ...
+[91564:MainThread](2026-03-30 10:40:06,977) INFO - qlib.workflow - [recorder.py:345] - Recorder cfd1ffbab10f4e84a2aaa31945c8be5c starts running under Experiment 706158807618320602 ...
+[91564:MainThread](2026-03-30 10:40:10,590) INFO - qlib.LSTM - [pytorch_lstm.py:58] - LSTM pytorch version...
+[91564:MainThread](2026-03-30 10:40:10,591) INFO - qlib.LSTM - [pytorch_lstm.py:75] - LSTM parameters setting:
+d_feat : 6
+hidden_size : 64
+num_layers : 2
+dropout : 0.0
+n_epochs : 200
+lr : 0.001
+metric : loss
+batch_size : 800
+early_stop : 20
+optimizer : adam
+loss_type : mse
+visible_GPU : 0
+use_GPU : False
+seed : None
+ModuleNotFoundError. CatBoostModel are skipped. (optional: maybe installing CatBoostModel can fix it.)
+ModuleNotFoundError. XGBModel is skipped(optional: maybe installing xgboost can fix it).
+[91564:MainThread](2026-03-30 10:42:03,521) INFO - qlib.timer - [log.py:127] - Time cost: 111.824s | Loading data Done
+[91564:MainThread](2026-03-30 10:42:22,680) INFO - qlib.timer - [log.py:127] - Time cost: 15.709s | RobustZScoreNorm Done
+[91564:MainThread](2026-03-30 10:42:24,636) INFO - qlib.timer - [log.py:127] - Time cost: 1.955s | Fillna Done
+[91564:MainThread](2026-03-30 10:42:28,160) INFO - qlib.timer - [log.py:127] - Time cost: 0.780s | DropnaLabel Done
+/Users/syk/Desktop/git_repo/qlib/qlib/data/dataset/processor.py:358: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[cols] = t
+[91564:MainThread](2026-03-30 10:42:28,404) INFO - qlib.timer - [log.py:127] - Time cost: 0.244s | CSRankNorm Done
+[91564:MainThread](2026-03-30 10:42:28,439) INFO - qlib.timer - [log.py:127] - Time cost: 24.917s | fit & process data Done
+[91564:MainThread](2026-03-30 10:42:28,440) INFO - qlib.timer - [log.py:127] - Time cost: 136.743s | Init data Done
+[91564:MainThread](2026-03-30 10:42:28,448) WARNING - qlib.utils - [__init__.py:849] - The parameter `reweighter` with value `None` is ignored.
+[91564:MainThread](2026-03-30 10:42:32,984) INFO - qlib.LSTM - [pytorch_lstm.py:230] - training...
+[91564:MainThread](2026-03-30 10:42:32,985) INFO - qlib.LSTM - [pytorch_lstm.py:234] - Epoch0:
+[91564:MainThread](2026-03-30 10:42:32,989) INFO - qlib.LSTM - [pytorch_lstm.py:235] - training...
+/Users/syk/miniconda3/lib/python3.12/site-packages/joblib/externals/loky/backend/resource_tracker.py:359: UserWarning: resource_tracker: There appear to be 2 leaked folder objects to clean up at shutdown
+  warnings.warn(
+/Users/syk/miniconda3/lib/python3.12/site-packages/joblib/externals/loky/backend/resource_tracker.py:375: UserWarning: resource_tracker: /var/folders/rd/zbbcj81d5tbb7vkmqbzrjjw40000gn/T/joblib_memmapping_folder_91564_33c4cfcb90f6449f8c140ad87ea0371e_45ce21834034414ebf6a27121c753e17: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/Users/syk/miniconda3/lib/python3.12/site-packages/joblib/externals/loky/backend/resource_tracker.py:375: UserWarning: resource_tracker: /var/folders/rd/zbbcj81d5tbb7vkmqbzrjjw40000gn/T/joblib_memmapping_folder_91564_254a16526af64b93ab552fdf62edab91_a9bfce6682c24489b44177fcfe3f6c0d: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/Users/syk/miniconda3/lib/python3.12/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 4 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
