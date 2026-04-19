@@ -1,0 +1,17 @@
+2026-04-19 14:17:06,669 [INFO] __main__: Alpha158 vs Alpha50 Sample Misalignment Root Cause Study
+2026-04-19 14:17:06,669 [INFO] __main__: Config: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\config.yaml
+2026-04-19 14:17:06,669 [INFO] __main__: Start time: 2026-04-19 14:17:06.669110
+2026-04-19 14:17:14,235 [INFO] __main__: ============================================================
+2026-04-19 14:17:14,235 [INFO] __main__: STEP 4: Alignment Experiment
+2026-04-19 14:17:14,235 [INFO] __main__: ============================================================
+2026-04-19 14:20:25,727 [ERROR] __main__: Study failed with error: 'slice' object is not iterable
+Traceback (most recent call last):
+  File "C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\run_study.py", line 271, in main
+    alignment_result = step4_alignment_experiment(
+  File "C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\run_study.py", line 121, in step4_alignment_experiment
+    result = align_and_compare(
+  File "C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\align_and_compare.py", line 277, in align_and_compare
+    a158_processed = apply_unified_preprocessing(
+  File "C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\align_and_compare.py", line 162, in apply_unified_preprocessing
+    for col in feature_cols:
+TypeError: 'slice' object is not iterable

@@ -1,0 +1,11 @@
+2026-04-19 14:21:56,536 [INFO] __main__: Alpha158 vs Alpha50 Sample Misalignment Root Cause Study
+2026-04-19 14:21:56,536 [INFO] __main__: Config: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\config.yaml
+2026-04-19 14:21:56,536 [INFO] __main__: Start time: 2026-04-19 14:21:56.536035
+2026-04-19 14:21:57,548 [INFO] __main__: ============================================================
+2026-04-19 14:21:57,548 [INFO] __main__: STEP 4: Alignment Experiment
+2026-04-19 14:21:57,549 [INFO] __main__: ============================================================
+2026-04-19 14:24:51,554 [INFO] align_and_compare: Alignment data saved to C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\data
+2026-04-19 14:24:51,554 [INFO] __main__: 
+Study completed at: 2026-04-19 14:24:51.554610
+2026-04-19 14:24:51,555 [INFO] __main__: Output directory: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output
+2026-04-19 14:24:51,555 [INFO] __main__: Report: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\reports\root_cause_report.md

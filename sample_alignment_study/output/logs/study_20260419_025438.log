@@ -1,0 +1,35 @@
+2026-04-19 02:54:38,284 [INFO] __main__: Alpha158 vs Alpha50 Sample Misalignment Root Cause Study
+2026-04-19 02:54:38,284 [INFO] __main__: Config: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\config.yaml
+2026-04-19 02:54:38,285 [INFO] __main__: Start time: 2026-04-19 02:54:38.285770
+2026-04-19 02:54:38,413 [INFO] __main__: ============================================================
+2026-04-19 02:54:38,413 [INFO] __main__: STEP 1: Configuration Alignment Check
+2026-04-19 02:54:38,413 [INFO] __main__: ============================================================
+2026-04-19 02:54:38,430 [INFO] config_checker: Corrected config saved to C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\data\corrected_config.yaml
+2026-04-19 02:54:38,430 [INFO] __main__: Corrected config saved to: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\data\corrected_config.yaml
+2026-04-19 02:54:44,886 [INFO] __main__: ============================================================
+2026-04-19 02:54:44,886 [INFO] __main__: STEP 2: Preprocessing Comparison
+2026-04-19 02:54:44,886 [INFO] __main__: ============================================================
+2026-04-19 02:54:44,899 [INFO] __main__: ============================================================
+2026-04-19 02:54:44,899 [INFO] __main__: STEP 3: Sample Generation Logic Analysis
+2026-04-19 02:54:44,899 [INFO] __main__: ============================================================
+2026-04-19 02:54:44,901 [INFO] __main__: Mermaid flow diagrams saved to: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\data\sample_generation_flows.txt
+2026-04-19 02:54:44,917 [INFO] __main__: ============================================================
+2026-04-19 02:54:44,918 [INFO] __main__: STEP 4: Alignment Experiment
+2026-04-19 02:54:44,918 [INFO] __main__: ============================================================
+2026-04-19 02:54:44,918 [INFO] __main__: Skipping alignment experiment (--skip-alignment flag)
+2026-04-19 02:54:44,933 [INFO] __main__: ============================================================
+2026-04-19 02:54:44,933 [INFO] __main__: STEP 5: Root Cause Report Generation
+2026-04-19 02:54:44,933 [INFO] __main__: ============================================================
+2026-04-19 02:54:44,934 [ERROR] __main__: Study failed with error: name 'misaligned_count' is not defined
+Traceback (most recent call last):
+  File "C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\run_study.py", line 288, in main
+    step5_report(
+  File "C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\run_study.py", line 154, in step5_report
+    generator.generate(str(report_path))
+  File "C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\report_generator.py", line 31, in generate
+    report = self._build_report()
+  File "C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\report_generator.py", line 43, in _build_report
+    self._build_config_check_table(),
+  File "C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\report_generator.py", line 124, in _build_config_check_table
+    lines.append(f"**Result**: {misaligned_count} misalignment(s) found.")
+NameError: name 'misaligned_count' is not defined

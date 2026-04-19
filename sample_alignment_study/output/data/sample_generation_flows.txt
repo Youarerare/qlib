@@ -1,0 +1,62 @@
+Alpha158 Sample Generation Flow:
+
+```mermaid
+flowchart TD
+    A[Start: Qlib Data Provider] --> B[Load OHLCV for instruments]
+    B --> C{Instruments Resolution}
+    C -->|Dynamic| C1[Resolve stock pool by date<br/>e.g. CSI300 components change over time]
+    C1 --> D[Compute Alpha158 Features<br/>via Qlib Expression Engine]
+    D --> D1{Rolling Window Check}
+    D1 -->|Window < required| D2[Produce NaN<br/>e.g. first 59 days for 60-day rolling]
+    D1 -->|Window >= required| D3[Compute feature value]
+    D2 --> E[Compute Label<br/>Ref $close,-2 / Ref $close,-1 - 1]
+    D3 --> E
+    E --> E1{Label NaN Check}
+    E1 -->|Last 2 trading days| E2[Label = NaN]
+    E1 -->|Other days| E3[Label = T+1 to T+2 return]
+    E2 --> F[Apply Processors]
+    E3 --> F
+    F --> F1[infer_processors: EMPTY]
+    F1 --> F2[learn_processors: DropnaLabel]
+    F2 --> F3{Drop rows with NaN label}
+    F3 --> F4[learn_processors: CSZScoreNorm label]
+    F4 --> G[Final Dataset]
+
+    style D2 fill:#ff9999
+    style E2 fill:#ff9999
+    style F3 fill:#ffcc00
+    style C1 fill:#99ccff
+```
+
+
+Alpha50 Sample Generation Flow:
+
+```mermaid
+flowchart TD
+    A[Start: Pre-computed Pickle File] --> B[Load top50_features.pkl]
+    B --> B1{Pickle Coverage Check}
+    B1 -->|Stock not in pickle| B2[MISSING - no data<br/>CRITICAL: fixed stock pool]
+    B1 -->|Stock in pickle| C[Features already computed<br/>via AlphaCalculatorAuto]
+    C --> C1{Rolling Window Check}
+    C1 -->|min_periods=1| C2[Produce value even with 1 data point<br/>May be unreliable]
+    C1 -->|Formula fails| C3[All NaN column<br/>CRITICAL: entire factor missing]
+    C2 --> D[Compute Label<br/>close.pct_change 1 .shift -1]
+    C3 --> D
+    D --> D1{Label NaN Check}
+    D1 -->|Last 1 trading day| D2[Label = NaN]
+    D1 -->|Other days| D3[Label = T to T+1 return<br/>DIFFERENT from Alpha158!]
+    D2 --> E[Apply Processors]
+    D3 --> E
+    E --> E1[infer_processors: DropnaLabel]
+    E1 --> E2{Drop rows with NaN label<br/>in INFER path - unusual!}
+    E2 --> E3[infer_processors: CSZScoreNorm feature]
+    E3 --> E4[learn_processors: DropnaLabel<br/>redundant]
+    E4 --> E5[learn_processors: CSZScoreNorm label]
+    E5 --> F[Final Dataset]
+
+    style B2 fill:#ff6666
+    style C2 fill:#ffcc00
+    style C3 fill:#ff6666
+    style D3 fill:#ff9999
+    style E2 fill:#ffcc00
+```

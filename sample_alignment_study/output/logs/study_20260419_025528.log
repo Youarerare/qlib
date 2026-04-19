@@ -1,0 +1,14 @@
+2026-04-19 02:55:28,063 [INFO] __main__: Alpha158 vs Alpha50 Sample Misalignment Root Cause Study
+2026-04-19 02:55:28,064 [INFO] __main__: Config: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\config.yaml
+2026-04-19 02:55:28,064 [INFO] __main__: Start time: 2026-04-19 02:55:28.064754
+2026-04-19 02:55:29,515 [INFO] __main__: ============================================================
+2026-04-19 02:55:29,516 [INFO] __main__: STEP 4: Alignment Experiment
+2026-04-19 02:55:29,516 [INFO] __main__: ============================================================
+2026-04-19 02:55:44,467 [ERROR] align_and_compare: Failed to load Alpha158 data: module 'qlib' has no attribute 'is_initialized'
+2026-04-19 02:55:44,467 [INFO] align_and_compare: Attempting manual data loading...
+2026-04-19 02:55:44,467 [ERROR] align_and_compare: Failed to load Alpha158: module 'qlib' has no attribute 'is_initialized'
+2026-04-19 02:55:44,491 [INFO] align_and_compare: Alignment data saved to C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\data
+2026-04-19 02:55:44,492 [INFO] __main__: 
+Study completed at: 2026-04-19 02:55:44.492242
+2026-04-19 02:55:44,492 [INFO] __main__: Output directory: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output
+2026-04-19 02:55:44,492 [INFO] __main__: Report: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\reports\root_cause_report.md

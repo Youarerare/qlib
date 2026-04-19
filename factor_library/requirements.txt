@@ -1,0 +1,6 @@
+# 因子回测管理与可视化筛选系统 - 依赖
+streamlit>=1.28.0
+pandas>=1.5.0
+numpy>=1.23.0
+scipy>=1.9.0
+openpyxl>=3.0.0

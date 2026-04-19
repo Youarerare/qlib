@@ -1,0 +1,82 @@
+alpha158:
+  handler_class: "Alpha158"
+  handler_module: "qlib.contrib.data.handler"
+  yaml_path: "examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml"
+  default_instruments: "csi500"
+  default_start_time: "2008-01-01"
+  default_end_time: "2020-08-01"
+  default_freq: "day"
+  infer_processors: []
+  learn_processors:
+    - class: DropnaLabel
+    - class: CSZScoreNorm
+      kwargs:
+        fields_group: label
+  process_type: "append"
+  feature_source: "qlib_expression"
+  label_formula: "Ref($close, -2)/Ref($close, -1) - 1"
+  rolling_windows: [5, 10, 20, 30, 60]
+  max_history_window: 60
+
+alpha50:
+  handler_class: "TopkAlphaHandler"
+  handler_module: "examples.alpha_factor_test.topk_alpha_handler"
+  yaml_path: "examples/alpha_factor_test/workflow_config_xgboost_top50.yaml"
+  default_instruments: "csi300"
+  default_start_time: "2020-01-01"
+  default_end_time: "2023-12-31"
+  default_freq: "day"
+  infer_processors:
+    - class: DropnaLabel
+    - class: CSZScoreNorm
+      kwargs:
+        fields_group: feature
+  learn_processors:
+    - class: DropnaLabel
+    - class: CSZScoreNorm
+      kwargs:
+        fields_group: label
+  process_type: "append"
+  feature_source: "precomputed_pickle"
+  pickle_path: "examples/alpha_factor_test/top50_features.pkl"
+  label_formula: "pct_change(1).shift(-1)"
+  rolling_windows: [5, 10, 15, 20, 30, 40, 50, 60, 80, 120, 150, 180]
+  max_history_window: 180
+
+alignment:
+  unified_instruments: "csi300"
+  unified_start_time: "2020-01-01"
+  unified_end_time: "2023-06-01"
+  unified_freq: "day"
+  unified_fit_start_time: "2020-01-01"
+  unified_fit_end_time: "2022-01-01"
+  min_consecutive_days: 60
+  label_horizon: 1
+  drop_any_nan: true
+  mad_threshold: 3.0
+  zscore_clip: 3.0
+
+output:
+  base_dir: "sample_alignment_study/output"
+  log_dir: "sample_alignment_study/output/logs"
+  figure_dir: "sample_alignment_study/output/figures"
+  data_dir: "sample_alignment_study/output/data"
+  report_dir: "sample_alignment_study/output/reports"
+
+qlib_init:
+  provider_uri: "~/.qlib/qlib_data/cn_data"
+  region: "cn"
+
+followup:
+  model_type: "lightgbm"
+  lgbm_params:
+    objective: "regression"
+    metric: "mse"
+    num_leaves: 64
+    learning_rate: 0.1
+    num_threads: 4
+    verbose: -1
+  train_years_3: 3
+  train_years_6: 6
+  test_period_months: 12
+  rolling_refit_months: 6

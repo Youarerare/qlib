@@ -1,0 +1,31 @@
+2026-04-19 14:25:08,384 [INFO] __main__: Alpha158 vs Alpha50 Sample Misalignment Root Cause Study
+2026-04-19 14:25:08,384 [INFO] __main__: Config: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\config.yaml
+2026-04-19 14:25:08,384 [INFO] __main__: Start time: 2026-04-19 14:25:08.384988
+2026-04-19 14:25:08,420 [INFO] __main__: ============================================================
+2026-04-19 14:25:08,420 [INFO] __main__: STEP 1: Configuration Alignment Check
+2026-04-19 14:25:08,420 [INFO] __main__: ============================================================
+2026-04-19 14:25:08,435 [INFO] config_checker: Corrected config saved to C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\data\corrected_config.yaml
+2026-04-19 14:25:08,436 [INFO] __main__: Corrected config saved to: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\data\corrected_config.yaml
+2026-04-19 14:25:09,432 [INFO] __main__: ============================================================
+2026-04-19 14:25:09,432 [INFO] __main__: STEP 2: Preprocessing Comparison
+2026-04-19 14:25:09,432 [INFO] __main__: ============================================================
+2026-04-19 14:25:09,440 [INFO] __main__: ============================================================
+2026-04-19 14:25:09,440 [INFO] __main__: STEP 3: Sample Generation Logic Analysis
+2026-04-19 14:25:09,440 [INFO] __main__: ============================================================
+2026-04-19 14:25:09,443 [INFO] __main__: Mermaid flow diagrams saved to: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\data\sample_generation_flows.txt
+2026-04-19 14:25:09,447 [INFO] __main__: ============================================================
+2026-04-19 14:25:09,447 [INFO] __main__: STEP 4: Alignment Experiment
+2026-04-19 14:25:09,447 [INFO] __main__: ============================================================
+2026-04-19 14:27:46,566 [INFO] align_and_compare: Alignment data saved to C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\data
+2026-04-19 14:27:46,575 [INFO] __main__: ============================================================
+2026-04-19 14:27:46,576 [INFO] __main__: STEP 5: Root Cause Report Generation
+2026-04-19 14:27:46,576 [INFO] __main__: ============================================================
+2026-04-19 14:27:46,578 [INFO] report_generator: Root cause report saved to C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\reports\root_cause_report.md
+2026-04-19 14:27:46,589 [INFO] __main__: ============================================================
+2026-04-19 14:27:46,589 [INFO] __main__: STEP 6: Follow-up Analysis
+2026-04-19 14:27:46,589 [INFO] __main__: ============================================================
+2026-04-19 14:27:46,589 [INFO] __main__: Skipping follow-up analysis (--skip-followup flag)
+2026-04-19 14:27:46,589 [INFO] __main__: 
+Study completed at: 2026-04-19 14:27:46.589920
+2026-04-19 14:27:46,589 [INFO] __main__: Output directory: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output
+2026-04-19 14:27:46,589 [INFO] __main__: Report: C:\Users\syk\Desktop\git_repo\qlib\sample_alignment_study\output\reports\root_cause_report.md

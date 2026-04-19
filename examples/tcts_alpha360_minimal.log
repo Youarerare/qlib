@@ -1,0 +1,23 @@
+[30232:MainThread](2026-03-31 11:13:00,680) INFO - qlib.Initialization - [config.py:453] - default_conf: client.
+[30232:MainThread](2026-03-31 11:13:01,682) INFO - qlib.Initialization - [__init__.py:82] - qlib successfully initialized based on client settings.
+[30232:MainThread](2026-03-31 11:13:01,682) INFO - qlib.Initialization - [__init__.py:84] - data_path={'__DEFAULT_FREQ': PosixPath('/Users/syk/.qlib/qlib_data/cn_data')}
+Loading data (single-process)...
+[30232:MainThread](2026-03-31 11:15:10,229) INFO - qlib.timer - [log.py:127] - Time cost: 128.545s | Loading data Done
+[30232:MainThread](2026-03-31 11:15:31,006) INFO - qlib.timer - [log.py:127] - Time cost: 17.632s | RobustZScoreNorm Done
+[30232:MainThread](2026-03-31 11:15:33,980) INFO - qlib.timer - [log.py:127] - Time cost: 2.972s | Fillna Done
+[30232:MainThread](2026-03-31 11:15:37,213) INFO - qlib.timer - [log.py:127] - Time cost: 0.759s | DropnaLabel Done
+/Users/syk/Desktop/git_repo/qlib/qlib/data/dataset/processor.py:358: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[cols] = t
+[30232:MainThread](2026-03-31 11:15:37,915) INFO - qlib.timer - [log.py:127] - Time cost: 0.702s | CSRankNorm Done
+[30232:MainThread](2026-03-31 11:15:37,953) INFO - qlib.timer - [log.py:127] - Time cost: 27.723s | fit & process data Done
+[30232:MainThread](2026-03-31 11:15:37,954) INFO - qlib.timer - [log.py:127] - Time cost: 156.271s | Init data Done
+/Users/syk/miniconda3/lib/python3.12/site-packages/joblib/externals/loky/backend/resource_tracker.py:359: UserWarning: resource_tracker: There appear to be 2 leaked folder objects to clean up at shutdown
+  warnings.warn(
+/Users/syk/miniconda3/lib/python3.12/site-packages/joblib/externals/loky/backend/resource_tracker.py:375: UserWarning: resource_tracker: /var/folders/rd/zbbcj81d5tbb7vkmqbzrjjw40000gn/T/joblib_memmapping_folder_30232_b6737a5dc91c48d6994938d30e7db38d_e47cca7289ba45ae8219803f1cc64d32: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/Users/syk/miniconda3/lib/python3.12/site-packages/joblib/externals/loky/backend/resource_tracker.py:375: UserWarning: resource_tracker: /var/folders/rd/zbbcj81d5tbb7vkmqbzrjjw40000gn/T/joblib_memmapping_folder_30232_60a5de8436514feab5884fe1e85d148b_bd490ca4a01f4b868c72be0df19de0f1: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")

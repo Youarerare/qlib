@@ -1,0 +1,810 @@
+# Qlib智能因子工厂重构提示词
+
+## 角色定位
+
+你是一个资深的量化交易系统架构师和Python全栈工程师。请帮我重构一个基于Qlib的量化因子搜索与管理系统。
+
+---
+
+## 背景现状
+
+当前系统分散在三个目录中，存在严重的代码重复和架构混乱：
+
+### 1. examples/alpha_factor_test/ 
+
+核心模块（clean/目录）：
+- alpha_engine.py：因子计算引擎（452行），支持Alpha101/191公式解析
+- ga_search.py：遗传算法搜索（994行），手写实现表达式树、交叉变异、适应度评估
+- ic_analyzer.py：IC/ICIR计算
+- data_manager.py：数据加载管理
+- config.py：GA参数配置
+- formula_parser.py：公式解析器
+- model_trainer.py：模型训练
+- search_one.py：单因子搜索
+
+零散脚本（20+个）：
+- run_alpha_ga_search.py：GA搜索入口
+- run_single_formula_ga.py：单公式GA
+- full_backtest.py：完整回测
+- compare_backtest.py：回测对比
+- quick_backtest.py：快速回测
+- icir_calculator.py：ICIR计算器
+- alpha_calculator.py：Alpha计算器
+- diag_*.py：各种诊断脚本（6个）
+- 以及其他一次性脚本
+
+中间产物文件（泛滥）：
+- all_alpha_results.csv, all_alpha_results_combined.csv
+- alpha101_results.csv, alpha101_real_results.csv
+- top50_by_icir.csv, top50_by_rank_icir.csv, top50_factors.csv
+- top50_features.pkl（127MB！）
+- xgboost_comparison_*.csv（多个版本）
+- 以及各种临时分析文件
+
+### 2. factor_library/
+
+数据库层：
+- database.py：SQLite因子库管理（15.9KB），增删改查、导入导出
+- config.py：入库阈值、回测参数配置
+
+回测引擎：
+- backtest_engine.py：统一回测引擎（346行），分组收益、多空收益计算
+- batch_search.py：批量搜索与自动入库（458行），支持批量回测和GA种子搜索
+- search_one.py：单因子搜索（294行）
+
+Web界面：
+- app.py：Streamlit可视化筛选系统（1075行）
+  - 因子列表页：排序、筛选、标签过滤
+  - 因子详情页：表达式、指标、分组收益曲线
+  - 因子对比页：2-4个因子IC序列对比
+  - 自动入库记录页
+  - 导入/导出页
+  - 一键模型训练页
+  - 在线回测页
+
+其他工具：
+- add_factor.py：手动添加因子
+- model_trainer.py：XGBoost/LightGBM模型训练
+- prepare_formulas.py：准备公式文件
+- test_improved_factors.py：改进因子测试
+- all_formulas.txt：291个种子公式
+- factor_library.db：SQLite数据库（36KB）
+- exports/：导出结果目录
+
+### 3. sample_alignment_study/
+
+对齐研究模块：
+- align_and_compare.py：Alpha158 vs Alpha50样本对齐（28.4KB）
+- config.yaml：对齐研究配置
+- config_checker.py：配置检查器
+- preprocessing_compare.py：预处理对比
+- followup_analysis.py：后续分析
+- report_generator.py：报告生成
+- run_study.py：研究运行入口
+- run_backtest_comparison.py：回测对比运行
+- sample_generation_analysis.py：样本生成分析
+- output/：输出目录
+
+---
+
+## 核心痛点
+
+1. 遗传算法完全手写
+   - 没有使用DEAP库，自己实现了ExpressionTreeNode、SubtreeCrossover、锦标赛选择等
+   - 但文件注释却写着"基于DEAP的遗传算法因子搜索"（名不副实）
+   - 缺乏DEAP的成熟功能：Statistics统计、HallOfFame管理、并行评估等
+
+2. 路径混乱，耦合严重
+   - factor_library 反复修改 sys.path 导入 alpha_factor_test/clean
+   - 两个目录都有 config.py、data_manager、ic_analyzer、model_trainer
+   - 循环依赖风险高，维护困难
+
+3. 重复代码多
+   - IC计算逻辑在多处重复
+   - 数据加载逻辑在多处重复
+   - 配置参数分散在多个config文件
+
+4. 中间文件泛滥
+   - 几十个CSV/PKL中间产物散落在目录中
+   - 没有明确的数据生命周期管理
+   - 127MB的PKL文件不知是否可以删除
+
+5. 无统一入口
+   - 用户不知道该运行哪个脚本
+   - batch_search.py、search_one.py、run_alpha_ga_search.py 功能重叠
+   - CLI参数不一致
+
+6. 数据源单一
+   - 仅支持Qlib内置的日频数据
+   - 不支持分钟级数据（1min/5min/15min）
+   - 不支持基本面数据（PE/PB/ROE等）
+   - 不支持外部特征导入（CSV/Parquet）
+
+---
+
+## 终极目标
+
+构建一个统一的智能因子工厂（Smart Factor Factory），具备以下能力：
+
+### 1. 多源数据导入层
+
+支持的数据类型：
+- 分钟级数据：1min/5min/15min K线（券商下载格式）
+- 天级数据：日线OHLCV（标准格式）
+- 基本面数据：PE/PB/ROE/营收/净利润等财务指标
+- 自定义特征：CSV/Parquet格式的任意特征
+- 外部数据源预留接口：Wind、Tushare、AKShare
+
+数据管理功能：
+- 统一数据格式：自动对齐到Qlib的MultiIndex(datetime, instrument)结构
+- 数据质量检查：
+  - 缺失值统计与填充策略
+  - 异常值检测（3-sigma、MAD方法）
+  - 时间连续性校验（交易日历对齐）
+  - 截面数据完整性检查
+- 数据版本管理：每次导入生成版本号，支持回滚
+- 元数据记录：数据来源、导入时间、字段说明
+
+### 2. 遗传算法因子搜索核心
+
+基于DEAP库重构：
+- 使用DEAP的creator定义个体和适应度
+- 使用DEAP的toolbox注册算子（交叉、变异、选择）
+- 使用DEAP的tools.HallOfFame管理历史最优
+- 使用DEAP的tools.Statistics进行统计
+- 使用DEAP的algorithms.eaSimple或自定义算法
+
+多目标优化：
+- IC最大化（预测能力）
+- ICIR最大化（稳定性）
+- 低换手率（交易成本）
+- 低相关性（与已有因子库）
+
+约束条件支持：
+- 表达式复杂度上限（最大树深度、最大节点数）
+- 算子白名单（允许使用的算子列表）
+- 字段白名单（允许使用的数据字段）
+- 自定义约束函数
+
+种子注入：
+- 用户可以提供优质种子表达式作为进化起点
+- 支持从数据库导入历史优秀因子作为种子
+- 支持从文件导入种子列表
+
+无意义表达式过滤：
+- 语法层检测：相同字段相减 (close-close)、纯常数表达式
+- 语义层检测：因子值为常数（标准差接近0）、全NaN
+- 运行时检测：除以零、对负数开方、对负数取log
+
+结构去重：
+- 提取结构签名：将所有数字替换为#（如 -20*ts_delta(...,1) → -#*ts_delta(...,#)）
+- 等价因子检测：仅系数不同的因子视为等价
+- 保留最优：同一结构中只保留fitness最高的因子
+
+并行评估：
+- 支持多进程并行计算因子IC/ICIR
+- DEAP的tools.Pool支持
+- 可配置并行度
+
+### 3. 自动回测与入库
+
+因子评估指标：
+- IC（Pearson相关系数）
+- ICIR（IC均值/IC标准差）
+- RankIC（Spearman相关系数）
+- RankICIR
+- IC胜率（IC>0的比例）
+- 分组收益（5分组，多头组、空头组收益）
+- 多空收益（多头-空头）
+- 超额收益（多头-平均）
+
+自动入库规则：
+- 阈值条件：ICIR>0.5, |IC|>0.02, IC胜率>50%（可配置）
+- 结构去重入库：相同语法结构的因子只保留ICIR最优的一个
+- 元数据记录：搜索时间、评估区间、GA参数、种子来源
+- 标签系统：自动打标（如"GA生成"、"种子衍生"、"高频"等）
+
+因子筛选作为特征批次回测：
+- 通过因子筛选作为特征批次回测
+- 统一回测对比
+- 类似Alpha50对齐研究的功能：所有因子除了特征表达式不同外，其他设置严格对齐
+  - 相同样本区间
+  - 相同股票池
+  - 相同数据预处理
+  - 相同Label计算公式
+  - 相同评估指标
+
+基准对齐：
+- 确保公平对比：除因子表达式外，所有配置一致，需要有测试脚本进行严格测试，样本对齐各项设置对齐。
+- 可配置基准因子（如Alpha158、市场因子）
+- 相对绩效评估
+
+### 4. 可视化与因子管理
+
+Web界面（Streamlit）：
+
+1. 因子列表页
+   - 表格展示所有因子
+   - 支持按IC/ICIR/RankICIR/IC胜率/分组收益排序
+   - 筛选：标签过滤、阈值过滤、时间范围过滤
+   - 批量操作：选择多个因子进行对比、导出、删除
+
+2. 因子详情页
+   - 基本信息：因子ID、表达式、创建时间、标签
+   - 核心指标：IC、ICIR、RankIC、RankICIR、IC胜率
+   - 分组收益：5分组收益柱状图
+   - IC时序图：IC值随时间变化曲线
+   - 因子值分布：直方图、箱线图
+   - 元数据：搜索参数、评估区间、种子来源
+
+3. 因子对比页
+   - 勾选2-4个因子
+   - IC序列对比图（多线）
+   - 分组收益对比图（分组柱状图）
+   - 相关性矩阵热力图
+   - 累计收益曲线
+
+4. 因子管理页
+   - 批量删除
+   - 标记最优
+   - 设置标签
+   - 导出CSV/Excel
+   - 导入因子
+
+时序观测：
+- 支持查看因子在不同时期的表现差异
+  - 训练期 vs 验证期 vs 测试期
+  - 不同年份表现
+  - 滚动窗口IC变化
+- 衰减分析：因子IC随时间衰减的趋势可视化
+- 稳定性评估：IC波动率、最大回撤
+
+### 5. 系统架构要求
+
+模块化设计：
+数据层（Data Layer）
+  ↓
+引擎层（Engine Layer）
+  ↓
+搜索层（Search Layer）
+  ↓
+评估层（Evaluation Layer）
+  ↓
+存储层（Storage Layer）
+  ↓
+展示层（Presentation Layer）
+
+各层完全解耦，通过接口通信，可独立替换。
+
+统一配置：
+- 一个config.yaml管理所有参数
+- 支持环境变量覆盖
+- 配置校验（Pydantic）
+
+统一CLI入口：
+# 数据导入
+factor-factory import --source minute_data.csv --type minute
+factor-factory import --source fundamentals.parquet --type fundamental
+
+# 因子搜索
+factor-factory search --ga --seeds seeds.txt --generations 50 --population 100
+factor-factory search --single "ts_delta(close, 1)"
+
+# 批量回测
+factor-factory backtest --batch factors.csv --instruments csi300
+factor-factory backtest --align alpha50 --base Alpha158
+
+# 因子管理
+factor-factory list --sort icir --top 50
+factor-factory export --format csv --output results.csv
+
+# Web界面
+factor-factory web --port 8501
+
+完整日志：
+- 结构化日志（JSON格式）
+- 每步操作都有日志记录
+- 支持日志级别调整（DEBUG/INFO/WARNING/ERROR）
+- 支持日志追溯
+
+测试覆盖：
+- 核心模块必须有单元测试（pytest）
+- 测试覆盖率 > 80%
+- CI/CD集成
+
+---
+
+## 技术规范
+
+### 技术栈
+
+语言：Python 3.10+
+遗传算法：DEAP 1.3+
+数据框架：Qlib 最新版
+数据处理：Pandas, Numpy 最新稳定版
+数据库：SQLite 内置
+Web框架：Streamlit 1.28+
+配置校验：Pydantic 2.0+
+CLI框架：Typer 0.9+
+测试框架：pytest 7.0+
+日志：structlog 可选
+并行计算：multiprocessing 内置
+
+### 代码规范
+
+1. PEP 8：严格遵循
+2. Type Hints：所有公共函数必须有类型注解
+3. Docstring：Google风格
+4. 职责划分：每个类有清晰的单一职责
+5. 禁止循环import：使用依赖注入或延迟导入
+6. 禁止硬编码路径：全部通过配置管理
+7. 错误处理：使用自定义异常类，提供明确的错误信息
+
+### 目录结构（建议）
+
+qlib_factor_factory/
+├── config/
+│   ├── default.yaml              # 默认配置
+│   ├── data_sources.yaml         # 数据源配置模板
+│   └── custom.yaml               # 用户自定义配置（gitignore）
+│
+├── src/
+│   ├── __init__.py
+│   │
+│   ├── data/                     # 数据层
+│   │   ├── __init__.py
+│   │   ├── loader.py             # 多源数据加载器
+│   │   ├── validator.py          # 数据质量检查
+│   │   ├── aligner.py            # 数据对齐工具
+│   │   └── types.py              # 数据类型定义
+│   │
+│   ├── engine/                   # 因子计算引擎
+│   │   ├── __init__.py
+│   │   ├── alpha_engine.py       # 因子表达式解析与执行
+│   │   ├── operators/            # 算子定义
+│   │   │   ├── ts_ops.py         # 时间序列算子
+│   │   │   ├── cs_ops.py         # 截面算子
+│   │   │   ├── math_ops.py       # 数学算子
+│   │   │   ├── binary_ops.py     # 二元算子
+│   │   │   └── logic_ops.py      # 逻辑算子
+│   │   └── formula_parser.py     # 公式预处理
+│   │
+│   ├── ga/                       # 遗传算法层（基于DEAP）
+│   │   ├── __init__.py
+│   │   ├── searcher.py           # GA搜索主流程
+│   │   ├── representation.py     # 个体表示
+│   │   ├── operators.py          # 交叉/变异算子
+│   │   ├── fitness.py            # 适应度函数
+│   │   ├── validators.py         # 表达式有效性检查
+│   │   └── dedup.py              # 结构去重
+│   │
+│   ├── evaluation/               # 评估层
+│   │   ├── __init__.py
+│   │   ├── ic_calculator.py      # IC/ICIR计算
+│   │   ├── group_backtest.py     # 分组收益计算
+│   │   └── metrics.py            # 综合指标
+│   │
+│   ├── storage/                  # 存储层
+│   │   ├── __init__.py
+│   │   ├── database.py           # SQLite因子库
+│   │   ├── models.py             # 数据模型（Pydantic）
+│   │   └── exporter.py           # CSV/Excel导出
+│   │
+│   ├── cli/                      # 命令行接口
+│   │   ├── __init__.py
+│   │   ├── main.py               # CLI入口
+│   │   ├── commands/             # 子命令
+│   │   │   ├── import_cmd.py
+│   │   │   ├── search_cmd.py
+│   │   │   ├── backtest_cmd.py
+│   │   │   ├── list_cmd.py
+│   │   │   └── web_cmd.py
+│   │   └── utils.py
+│   │
+│   └── web/                      # Web界面
+│       ├── __init__.py
+│       ├── app.py                # Streamlit主应用
+│       ├── pages/                # 多页面
+│       │   ├── factor_list.py
+│       │   ├── factor_detail.py
+│       │   ├── factor_compare.py
+│       │   └── factor_manager.py
+│       └── components/           # 可复用组件
+│
+├── tests/
+│   ├── test_data_loader.py
+│   ├── test_alpha_engine.py
+│   ├── test_ga_searcher.py
+│   ├── test_ic_calculator.py
+│   ├── test_group_backtest.py
+│   └── test_database.py
+│
+├── examples/
+│   ├── quick_start.py
+│   ├── minute_data_example.py
+│   ├── ga_search_example.py
+│   └── batch_backtest_example.py
+│
+├── docs/
+│   ├── README.md
+│   ├── INSTALL.md
+│   ├── USAGE.md
+│   ├── MIGRATION.md
+│   └── API.md
+│
+├── pyproject.toml
+├── .gitignore
+├── .pre-commit-config.yaml
+└── pytest.ini
+
+---
+
+## 交付要求
+
+请按以下顺序逐步交付代码，每步完成后我会确认再继续：
+
+### Phase 1：基础架构（核心）
+
+目标：搭建系统骨架，实现数据加载和因子计算
+
+交付物：
+1. 完整的config.yaml配置体系
+   - 数据路径配置
+   - 回测参数配置
+   - GA参数配置
+   - 入库阈值配置
+   
+2. 数据加载器（基础版）
+   - 支持日线CSV导入
+   - 统一为MultiIndex(datetime, instrument)格式
+   - 基础数据校验（缺失值、异常值）
+   
+3. 重构alpha_engine.py
+   - 保留现有所有算子（ts_*, cs_*, math_*, binary_*, logic_*）
+   - 优化架构（算子模块化）
+   - 添加完整的type hints和docstring
+   
+4. IC/ICIR计算模块
+   - Pearson IC计算
+   - Spearman Rank IC计算
+   - ICIR计算
+   - IC胜率计算
+
+关键类接口设计：
+
+# src/data/loader.py
+class DataLoader:
+    """数据加载器基类"""
+    
+    @abstractmethod
+    def load(self, source: str, **kwargs) -> pd.DataFrame:
+        """加载数据，返回MultiIndex DataFrame"""
+        pass
+
+class CSVDataLoader(DataLoader):
+    """CSV数据加载器"""
+    
+    def load(
+        self, 
+        source: str,
+        date_col: str = "date",
+        instrument_col: str = "instrument",
+        frequency: DataFrequency = DataFrequency.DAILY
+    ) -> pd.DataFrame:
+        """加载CSV数据并转换为Qlib格式"""
+        pass
+
+# src/engine/alpha_engine.py
+class AlphaEngine:
+    """因子计算引擎"""
+    
+    def __init__(self, data: pd.DataFrame, config: EngineConfig):
+        """初始化引擎"""
+        pass
+    
+    def calculate(self, formula: str) -> pd.Series:
+        """计算单个因子"""
+        pass
+    
+    def calculate_batch(self, formulas: Dict[str, str]) -> pd.DataFrame:
+        """批量计算因子"""
+        pass
+
+# src/evaluation/ic_calculator.py
+class ICCalculator:
+    """IC计算器"""
+    
+    def __init__(self, config: ICConfig):
+        pass
+    
+    def calculate_ic(
+        self, 
+        factor: pd.Series, 
+        returns: pd.Series,
+        method: str = "pearson"
+    ) -> pd.Series:
+        """计算每日IC序列"""
+        pass
+    
+    def calculate_ic_summary(
+        self, 
+        ic_series: pd.Series
+    ) -> Dict[str, float]:
+        """计算IC统计摘要"""
+        pass
+
+### Phase 2：遗传算法（核心）
+
+目标：使用DEAP重写GA搜索器
+
+交付物：
+1. DEAP集成
+   - 使用creator定义个体和适应度
+   - 使用toolbox注册算子
+   - 使用HallOfFame和Statistics
+   
+2. 表达式树表示
+   - ExpressionTree类
+   - 表达式解析器
+   - 树到字符串转换
+   
+3. 遗传算子
+   - 子树交叉（SubtreeCrossover）
+   - 节点变异（NodeMutation）
+   - 窗口变异（WindowMutation）
+   - 字段变异（FieldMutation）
+   
+4. 适应度函数
+   - 综合适应度：IC权重 + ICIR权重 + 稳定性奖励
+   - 复杂度惩罚
+   - 相关性惩罚
+   
+5. 无意义表达式过滤
+   - 语法层检测
+   - 语义层检测
+   
+6. 结构去重
+   - 结构签名提取
+   - 等价因子检测
+
+关键类接口设计：
+
+# src/ga/searcher.py
+from deap import base, creator, tools, algorithms
+
+class GAFactorSearcher:
+    """基于DEAP的遗传算法因子搜索器"""
+    
+    def __init__(self, engine: AlphaEngine, config: GAConfig):
+        self.engine = engine
+        self.config = config
+        self.toolbox = base.Toolbox()
+        self._setup_deap()
+    
+    def _setup_deap(self):
+        """配置DEAP环境"""
+        # 创建适应度类
+        creator.create("FitnessMax", base.Fitness, weights=(1.0,))
+        # 创建个体类
+        creator.create("Individual", ExpressionTree, fitness=creator.FitnessMax)
+        
+        # 注册算子
+        self.toolbox.register("evaluate", self._evaluate_fitness)
+        self.toolbox.register("mate", self._crossover)
+        self.toolbox.register("mutate", self._mutate)
+        self.toolbox.register("select", tools.selTournament, tournsize=3)
+    
+    def search(
+        self, 
+        seed_expressions: Optional[List[str]] = None,
+        existing_factors: Optional[List[pd.Series]] = None
+    ) -> List[FactorResult]:
+        """执行遗传算法搜索"""
+        # 初始化种群
+        population = self._initialize_population(seed_expressions)
+        
+        # 创建Hall of Fame
+        hof = tools.HallOfFame(maxsize=50)
+        
+        # 创建统计
+        stats = tools.Statistics(lambda ind: ind.fitness.values)
+        stats.register("avg", np.mean)
+        stats.register("max", np.max)
+        stats.register("min", np.min)
+        
+        # 执行进化
+        population, logbook = algorithms.eaSimple(
+            population, self.toolbox,
+            cxpb=self.config.crossover_prob,
+            mutpb=self.config.mutation_prob,
+            ngen=self.config.n_generations,
+            stats=stats,
+            halloffame=hof,
+            verbose=True
+        )
+        
+        return self._extract_results(hof)
+
+### Phase 3：回测与存储
+
+目标：实现分组回测和因子库管理
+
+交付物：
+1. 分组收益计算
+   - 5分组收益
+   - 多空收益
+   - 超额收益
+   
+2. SQLite因子库
+   - 因子CRUD
+   - 指标存储
+   - 元数据存储
+   
+3. 自动入库逻辑
+   - 阈值检查
+   - 结构去重
+   - 标签系统
+   
+4. 批量回测
+   - 批量导入因子
+   - 统一回测
+   - 结果对比
+
+### Phase 4：CLI与Web
+
+目标：提供用户交互界面
+
+交付物：
+1. Typer CLI
+   - import命令
+   - search命令
+   - backtest命令
+   - list命令
+   - web命令
+   
+2. Streamlit Web界面
+   - 因子列表页
+   - 因子详情页
+   - 因子对比页
+   - 因子管理页
+
+### Phase 5：测试与文档
+
+目标：保证质量和可用性
+
+交付物：
+1. 单元测试
+   - test_data_loader.py
+   - test_alpha_engine.py
+   - test_ga_searcher.py
+   - test_ic_calculator.py
+   - test_database.py
+   
+2. 文档
+   - README.md
+   - INSTALL.md
+   - USAGE.md
+   - MIGRATION.md（从旧系统迁移）
+   - API.md
+
+---
+
+## 关键注意事项
+
+1. 向后兼容
+   - 保留对现有因子表达式格式的兼容（Alpha101/191格式）
+   - 支持导入现有的all_formulas.txt种子文件
+   - 兼容现有的SQLite数据库格式
+
+2. 性能优先
+   - 因子计算和IC评估是瓶颈，必须支持多进程并行
+   - DEAP的并行评估：使用multiprocessing.Pool
+   - 大数据集处理：使用分块计算
+   - 缓存机制：表达式结果缓存（LRU Cache）
+
+3. 可追溯性
+   - 每个因子入库时必须记录完整元数据：
+     - 搜索时间
+     - 评估区间
+     - GA参数（种群大小、代数、变异率等）
+     - 种子来源
+     - 数据结构版本
+
+4. 安全性
+   - 公式解析使用安全的eval方式
+   - 禁止执行任意Python代码
+   - 使用白名单机制限制可用函数
+   - 输入验证和 sanitization
+
+5. 可扩展性
+   - 数据源插件化：未来可能支持Wind、Tushare、AKShare
+   - 算子可扩展：用户可自定义算子
+   - 适应度函数可配置：支持自定义评估标准
+   - 多目标优化：未来可能加入更多优化目标
+
+6. 错误处理
+   - 自定义异常类
+     - DataLoadError
+     - FormulaParseError
+     - FactorCalculationError
+     - ICComputeError
+   - 友好的错误提示
+   - 详细的错误日志
+
+---
+
+## 开始工作
+
+请先输出以下内容：
+
+### 第一步：理解与建议
+1. 你对这个架构设计的理解（200字以内）
+2. 你的补充建议（至少3条）
+3. 你认为最大的技术挑战是什么
+
+### 第二步：配置设计
+输出完整的 config/default.yaml 设计草案，包含：
+- 数据路径配置
+- 回测参数配置
+- GA参数配置
+- 入库阈值配置
+- Web服务配置
+
+### 第三步：Phase 1详细计划
+输出Phase 1的详细实现计划，包含：
+1. 文件创建顺序
+2. 每个文件的核心类和函数
+3. 类之间的依赖关系图
+4. 关键接口的完整定义
+
+### 第四步：等待确认
+等我确认无误后，再开始编写Phase 1的实际代码。
+
+---
+
+## 参考信息
+
+### 现有系统支持的字段
+后续若新增如QMT数据集需要字段可灵活替换扩展。
+
+基础字段：
+open, high, low, close, volume, vwap, returns
+
+成交量字段：
+adv5, adv10, adv15, adv20, adv30, adv40, adv50, adv60, adv80, adv120, adv150, adv180
+
+### 现有系统支持的算子
+
+时间序列算子（17个）：
+ts_sum, ts_mean, ts_std_dev, ts_min, ts_max
+ts_rank, ts_delta, ts_delay, ts_corr, ts_covariance
+ts_scale, ts_decay_linear, ts_arg_max, ts_arg_min
+ts_product, ts_av_diff, ts_zscore
+
+截面算子（3个）：
+rank, scale, cs_mean
+
+数学算子（6个）：
+abs, log, sign, sqrt, signed_power, power
+
+二元算子（6个）：
+add, subtract, multiply, divide, max, min
+
+逻辑算子（3个）：
+if_else, and, or
+
+### 现有入库阈值
+ICIR > 0.5
+|IC均值| > 0.02
+IC胜率 > 0.5
+
+### 现有GA配置
+种群大小：30-200
+进化代数：10-50
+交叉概率：0.7
+变异概率：0.2
+最大树深度：5
+
+---
+
+请按照上述要求，逐步交付代码。每完成一个Phase，我会进行测试和确认，然后进入下一个Phase。

@@ -1,0 +1,208 @@
+2026-04-18 01:43:36,718 [pipeline] INFO - 流水线开始: 2026-04-18 01:43:36.718116
+2026-04-18 01:43:36,718 [pipeline] INFO - 配置: instruments=csi300, 时间=2020-01-01~2023-06-01
+2026-04-18 01:43:36,718 [pipeline] INFO - ============================================================
+2026-04-18 01:43:36,718 [pipeline] INFO - Step 1: 加载公式
+2026-04-18 01:43:36,721 [clean.formula_parser] INFO - 加载完成: Alpha101=100, Alpha191=191, 问题=0
+2026-04-18 01:43:36,721 [pipeline] INFO -   Alpha101: 100个公式
+2026-04-18 01:43:36,721 [pipeline] INFO -   Alpha191: 191个公式
+2026-04-18 01:43:36,721 [pipeline] INFO -   问题公式: 0个
+2026-04-18 01:43:36,723 [pipeline] INFO -   合并后唯一公式: 291个
+2026-04-18 01:43:36,723 [pipeline] INFO - ============================================================
+2026-04-18 01:43:36,723 [pipeline] INFO - Step 2: 计算因子
+2026-04-18 01:43:42,507 [clean.data_manager] INFO - qlib初始化完成
+2026-04-18 01:43:42,611 [clean.data_manager] INFO - csi300在2020-01-01~2023-06-01期间: 433只成分股
+2026-04-18 01:44:13,014 [clean.data_manager] INFO - 加载OHLCV: 350928条, 433只股票
+2026-04-18 01:45:25,903 [clean.alpha_engine] INFO -   进度: 10/291
+2026-04-18 01:49:37,518 [clean.alpha_engine] INFO -   进度: 20/291
+2026-04-18 01:54:54,682 [clean.alpha_engine] INFO -   进度: 30/291
+2026-04-18 01:58:10,092 [clean.alpha_engine] INFO -   进度: 40/291
+2026-04-18 01:59:19,605 [clean.alpha_engine] INFO -   进度: 50/291
+2026-04-18 02:02:45,055 [clean.alpha_engine] INFO -   进度: 100/291
+2026-04-18 02:05:54,032 [clean.alpha_engine] INFO -   进度: 110/291
+2026-04-18 02:07:02,674 [clean.alpha_engine] INFO -   进度: 120/291
+2026-04-18 02:08:19,476 [clean.alpha_engine] INFO -   进度: 130/291
+2026-04-18 02:09:32,041 [clean.alpha_engine] INFO -   进度: 140/291
+2026-04-18 02:12:26,558 [clean.alpha_engine] INFO -   进度: 150/291
+2026-04-18 02:13:11,033 [clean.alpha_engine] INFO -   进度: 160/291
+2026-04-18 02:13:27,418 [clean.alpha_engine] INFO -   进度: 170/291
+2026-04-18 02:15:14,030 [clean.alpha_engine] INFO -   进度: 180/291
+2026-04-18 02:18:54,986 [clean.alpha_engine] INFO -   进度: 190/291
+2026-04-18 02:21:10,615 [clean.alpha_engine] INFO -   进度: 200/291
+2026-04-18 02:21:22,367 [clean.alpha_engine] INFO -   进度: 210/291
+2026-04-18 02:27:40,069 [clean.alpha_engine] INFO -   进度: 220/291
+2026-04-18 02:31:35,214 [clean.alpha_engine] INFO -   进度: 230/291
+2026-04-18 02:38:25,963 [clean.alpha_engine] INFO -   进度: 240/291
+2026-04-18 02:40:57,809 [clean.alpha_engine] INFO -   进度: 250/291
+2026-04-18 02:42:09,177 [clean.alpha_engine] INFO -   进度: 260/291
+2026-04-18 02:43:21,894 [clean.alpha_engine] INFO -   进度: 270/291
+2026-04-18 02:45:05,433 [clean.alpha_engine] INFO -   进度: 280/291
+2026-04-18 02:45:17,552 [clean.alpha_engine] INFO -   进度: 290/291
+2026-04-18 02:45:24,324 [clean.alpha_engine] INFO - 因子计算完成: 成功=244, 失败=47
+2026-04-18 02:45:24,598 [clean.alpha_engine] WARNING - 失败因子列表:
+                 name                                                                                                 error
+0   alpha101_alpha011  公式执行失败: (rank(ts_max((vwap - close), 3)) + rank(ts_min(vwap - close), 3)) * rank(ts_delt... | 错误: Al
+1   alpha101_alpha014  公式执行失败: (-rank(ts_delta(returns, 3))) * ts_corr(open, volume, 10))... | 错误: unmatched ')' (<string>,
+2   alpha101_alpha049  公式执行失败: if_else(subtract(divide(ts_delta(ts_delay(close, 10), 10), 10), divide(ts_delta(... | 错误: 'i
+3   alpha101_alpha051  公式执行失败: if_else(subtract(divide(ts_delta(ts_delay(close, 10), 10), 10), divide(ts_delta(... | 错误: 'i
+4   alpha101_alpha062  公式执行失败: ((rank(ts_corr(vwap, ts_sum(adv20, 22.4101), 9.91009)) < rank(((rank(open) + ran... | 错误: wi
+5   alpha101_alpha064  公式执行失败: ((rank(ts_corr(ts_sum(((open * 0.178404) + (low * (1 - 0.178404))), 12.7054),ts_... | 错误: wi
+6   alpha101_alpha065  公式执行失败: ((rank(ts_corr(((open * 0.00817205) + (vwap * (1 - 0.00817205))), ts_sum(adv60,8... | 错误: wi
+7   alpha101_alpha066  公式执行失败: ((rank(ts_decay_linear(ts_delta(vwap, 3.51013), 7.23052)) + ts_rank(ts_decay_lin... | 错误: wi
+8   alpha101_alpha067  公式执行失败: (power(rank((high - ts_min(high, 2.14593))), rank(ts_corr(group_neutralize(vwap,... | 错误: wi
+9   alpha101_alpha068  公式执行失败: ((ts_rank(ts_corr(rank(high), rank(adv15), 8.91644), 13.9333) < rank(ts_delta(((... | 错误: wi
+10  alpha101_alpha069  公式执行失败: ((power(rank(ts_max(ts_delta(group_neutralize(vwap, industry), 2.72412),4.79344)... | 错误: wi
+11  alpha101_alpha071  公式执行失败: max(ts_rank(ts_decay_linear(ts_corr(ts_rank(close, 3.43976), ts_rank(adv180,12.0... | 错误: wi
+12  alpha101_alpha072  公式执行失败: (rank(ts_decay_linear(ts_corr(((high + low) / 2), adv40, 8.93345), 10.1519)) / r... | 错误: wi
+13  alpha101_alpha073  公式执行失败: (max(rank(ts_decay_linear(ts_delta(vwap, 4.72775), 2.91864)), ts_rank(ts_decay_l... | 错误: wi
+14  alpha101_alpha074  公式执行失败: ((rank(ts_corr(close, ts_sum(adv30, 37.4843), 15.1365)) < rank(ts_corr(rank(((hi... | 错误: wi
+15  alpha101_alpha075  公式执行失败: (rank(ts_corr(vwap, volume, 4.24304)) < rank(ts_corr(rank(low), rank(adv50),12.4... | 错误: wi
+16  alpha101_alpha076  公式执行失败: (max(rank(ts_decay_linear(ts_delta(vwap, 1.24383), 11.8259)), ts_rank(ts_decay_l... | 错误: wi
+17  alpha101_alpha077  公式执行失败: min(rank(ts_decay_linear(((((high + low) / 2) + high) - (vwap + high)), 20.0451)... | 错误: wi
+18  alpha101_alpha078  公式执行失败: (power(rank(ts_corr(ts_sum(((low * 0.352233) + (vwap * (1 - 0.352233))), 19.7428... | 错误: wi
+19  alpha101_alpha079  公式执行失败: (rank(ts_delta(group_neutralize(((close * 0.60733) + (open * (1 - 0.60733))),sec... | 错误: wi
+20  alpha101_alpha080  公式执行失败: ((power(rank(sign(ts_delta(group_neutralize(((open * 0.868128) + (high * (1 - 0.... | 错误: wi
+21  alpha101_alpha081  公式执行失败: -(rank(log(ts_product(rank((power(rank(ts_corr(vwap, ts_sum(adv10, 49.6054),8.47... | 错误: wi
+22  alpha101_alpha082  公式执行失败: (min(rank(ts_decay_linear(ts_delta(open, 1.46063), 14.8717)), ts_rank(ts_decay_l... | 错误: wi
+23  alpha101_alpha084  公式执行失败: power(ts_rank((vwap - ts_max(vwap, 15.3217)), 20.7127), ts_delta(close,4.96796))... | 错误: wi
+24  alpha101_alpha085  公式执行失败: power(rank(ts_corr(((high * 0.876703) + (close * (1 - 0.876703))), adv30,9.61331... | 错误: wi
+25  alpha101_alpha086  公式执行失败: ((ts_rank(ts_corr(close, ts_sum(adv20, 14.7444), 6.00049), 20.4195) < rank(((ope... | 错误: wi
+26  alpha101_alpha087  公式执行失败: (max(rank(ts_decay_linear(ts_delta(((close * 0.369701) + (vwap * (1 - 0.369701))... | 错误: wi
+27  alpha101_alpha088  公式执行失败: min(rank(ts_decay_linear(((rank(open) + rank(low)) - (rank(high) + rank(close)))... | 错误: wi
+28  alpha101_alpha089  公式执行失败: (ts_rank(ts_decay_linear(ts_corr(((low * 0.967285) + (low * (1 - 0.967285))), ad... | 错误: wi
+29  alpha101_alpha090  公式执行失败: ((power(rank((close - ts_max(close, 4.66719))), ts_rank(ts_corr(group_neutralize... | 错误: wi
+30  alpha101_alpha091  公式执行失败: ((ts_rank(ts_decay_linear(ts_decay_linear(ts_corr(group_neutralize(close,industr... | 错误: wi
+31  alpha101_alpha092  公式执行失败: min(ts_rank(ts_decay_linear(((((high + low) / 2) + close) < (low + open)), 14.72... | 错误: wi
+32  alpha101_alpha093  公式执行失败: (ts_rank(ts_decay_linear(ts_corr(group_neutralize(vwap, industry), adv81,17.4193... | 错误: na
+33  alpha101_alpha094  公式执行失败: ((power(rank((vwap - ts_min(vwap, 11.5783))), ts_rank(ts_corr(ts_rank(vwap,19.64... | 错误: wi
+34  alpha101_alpha095  公式执行失败: (rank((open - ts_min(open, 12.4105))) < ts_rank((power(rank(ts_corr(ts_sum(((hig... | 错误: wi
+35  alpha101_alpha096  公式执行失败: (max(ts_rank(ts_decay_linear(ts_corr(rank(vwap), rank(volume), 5.83878),4.16783)... | 错误: wi
+36  alpha101_alpha097  公式执行失败: ((rank(ts_decay_linear(ts_delta(group_neutralize(((low * 0.721001) + (vwap * (1 ... | 错误: wi
+37  alpha101_alpha098  公式执行失败: (rank(ts_decay_linear(ts_corr(vwap, ts_sum(adv5, 26.4719), 4.58418), 7.18088)) -... | 错误: wi
+38  alpha101_alpha099  公式执行失败: ((rank(ts_corr(ts_sum(((high + low) / 2), 19.8975), ts_sum(adv60, 19.8975), 8.81... | 错误: wi
+39  alpha191_alpha021  公式执行失败: ts_regression(ts_mean(close, 6), ts_step(1), 6, lag=0, rettype=2)... | 错误: name 'ts_regressi
+40  alpha191_alpha055  公式执行失败: ts_sum(16*(close-ts_delay(close,1)+(close-open)/2+ts_delay(close,1)-ts_delay(ope... | 错误: un
+41  alpha191_alpha116  公式执行失败: ts_regression(close, ts_step(1), 20, lag=0, rettype=2)... | 错误: name 'ts_regression' is not 
+42  alpha191_alpha137  公式执行失败: 16*(close-ts_delay(close,1)+(close-open)/2+ts_delay(close,1)-ts_delay(open,1))/(... | 错误: un
+43  alpha191_alpha147  公式执行失败: ts_regression(ts_mean(close, 12), ts_step(1), 12, lag=0, rettype=2)... | 错误: name 'ts_regres
+44  alpha191_alpha149  公式执行失败: ts_regression(if_else(group_mean(close / ts_delay(close, 1) - 1, cap, market) < ... | 错误: un
+45  alpha191_alpha166  公式执行失败: (-20 * power(19, 1.5) * ts_sum((close / ts_delay(close, 1) - 1) - ts_mean(close ... | 错误: 'i
+46  alpha191_alpha181  公式执行失败: ts_sum((close / ts_delay(close, 1) - 1) - ts_mean(close / ts_delay(close, 1) - 1... | 错误: un
+2026-04-18 02:45:25,778 [pipeline] INFO -   保存到: C:\Users\syk\Desktop\git_repo\qlib\examples\alpha_factor_test\clean\output\all_features.pkl
+2026-04-18 02:45:25,780 [pipeline] INFO -   形状: (350928, 245)
+2026-04-18 02:45:25,780 [pipeline] INFO - ============================================================
+2026-04-18 02:45:25,781 [pipeline] INFO - Step 3: 评估IC/ICIR
+2026-04-18 02:45:35,992 [clean.ic_analyzer] INFO -   评估进度: 10/244
+2026-04-18 02:45:45,725 [clean.ic_analyzer] INFO -   评估进度: 20/244
+2026-04-18 02:45:55,412 [clean.ic_analyzer] INFO -   评估进度: 30/244
+2026-04-18 02:46:05,121 [clean.ic_analyzer] INFO -   评估进度: 40/244
+2026-04-18 02:46:14,785 [clean.ic_analyzer] INFO -   评估进度: 50/244
+2026-04-18 02:46:24,489 [clean.ic_analyzer] INFO -   评估进度: 60/244
+2026-04-18 02:46:34,218 [clean.ic_analyzer] INFO -   评估进度: 70/244
+2026-04-18 02:46:43,892 [clean.ic_analyzer] INFO -   评估进度: 80/244
+2026-04-18 02:46:53,548 [clean.ic_analyzer] INFO -   评估进度: 90/244
+2026-04-18 02:47:03,155 [clean.ic_analyzer] INFO -   评估进度: 100/244
+2026-04-18 02:47:12,673 [clean.ic_analyzer] INFO -   评估进度: 110/244
+2026-04-18 02:47:22,348 [clean.ic_analyzer] INFO -   评估进度: 120/244
+2026-04-18 02:47:32,117 [clean.ic_analyzer] INFO -   评估进度: 130/244
+2026-04-18 02:47:41,488 [clean.ic_analyzer] INFO -   评估进度: 140/244
+2026-04-18 02:47:51,152 [clean.ic_analyzer] INFO -   评估进度: 150/244
+2026-04-18 02:48:00,864 [clean.ic_analyzer] INFO -   评估进度: 160/244
+2026-04-18 02:48:10,695 [clean.ic_analyzer] INFO -   评估进度: 170/244
+2026-04-18 02:48:20,300 [clean.ic_analyzer] INFO -   评估进度: 180/244
+2026-04-18 02:48:29,931 [clean.ic_analyzer] INFO -   评估进度: 190/244
+2026-04-18 02:48:39,082 [clean.ic_analyzer] INFO -   评估进度: 200/244
+2026-04-18 02:48:48,721 [clean.ic_analyzer] INFO -   评估进度: 210/244
+2026-04-18 02:48:58,387 [clean.ic_analyzer] INFO -   评估进度: 220/244
+2026-04-18 02:49:08,086 [clean.ic_analyzer] INFO -   评估进度: 230/244
+2026-04-18 02:49:17,440 [clean.ic_analyzer] INFO -   评估进度: 240/244
+2026-04-18 02:49:21,016 [pipeline] INFO -   评估完成: 244个因子
+2026-04-18 02:49:21,020 [pipeline] INFO -   Top50因子已保存
+2026-04-18 02:49:21,020 [pipeline] INFO -   Top 10因子:
+2026-04-18 02:49:21,020 [pipeline] INFO -     #1: alpha191_alpha185 | RankICIR=-0.7440
+2026-04-18 02:49:21,022 [pipeline] INFO -     #2: alpha101_alpha033 | RankICIR=-0.7440
+2026-04-18 02:49:21,022 [pipeline] INFO -     #3: alpha101_alpha101 | RankICIR=0.7126
+2026-04-18 02:49:21,023 [pipeline] INFO -     #4: alpha101_alpha038 | RankICIR=-0.7099
+2026-04-18 02:49:21,023 [pipeline] INFO -     #5: alpha191_alpha143 | RankICIR=0.6565
+2026-04-18 02:49:21,023 [pipeline] INFO -     #6: alpha191_alpha178 | RankICIR=0.6474
+2026-04-18 02:49:21,023 [pipeline] INFO -     #7: alpha101_alpha025 | RankICIR=-0.6441
+2026-04-18 02:49:21,023 [pipeline] INFO -     #8: alpha191_alpha163 | RankICIR=-0.6441
+2026-04-18 02:49:21,023 [pipeline] INFO -     #9: alpha101_alpha009 | RankICIR=-0.5996
+2026-04-18 02:49:21,023 [pipeline] INFO -     #10: alpha191_alpha142 | RankICIR=-0.5856
+2026-04-18 02:49:21,074 [pipeline] INFO - ============================================================
+2026-04-18 02:49:21,074 [pipeline] INFO - Step 4: 模型对比
+2026-04-18 02:52:23,723 [clean.data_manager] INFO - 加载Alpha158: (248100, 159)
+2026-04-18 02:52:23,777 [clean.data_manager] INFO - 共同股票池: 433只
+2026-04-18 02:52:23,779 [clean.model_trainer] INFO - ============================================================
+2026-04-18 02:52:23,779 [clean.model_trainer] INFO - 模型1: Top50因子
+2026-04-18 02:52:34,218 [clean.model_trainer] INFO - Top50: 训练=0, 测试=0, 特征=244
+2026-04-18 02:52:35,135 [clean.model_trainer] INFO - ============================================================
+2026-04-18 02:52:35,135 [clean.model_trainer] INFO - 模型2: Alpha158
+2026-04-18 02:53:38,097 [pipeline] INFO - ============================================================
+2026-04-18 02:53:38,097 [pipeline] INFO - Step 4: 模型对比
+2026-04-18 02:53:44,322 [clean.data_manager] INFO - qlib初始化完成
+2026-04-18 02:55:14,657 [clean.data_manager] INFO - 加载Alpha158: (248100, 159)
+2026-04-18 02:55:14,703 [clean.data_manager] INFO - 共同股票池: 433只
+2026-04-18 02:55:14,703 [clean.model_trainer] INFO - ============================================================
+2026-04-18 02:55:14,704 [clean.model_trainer] INFO - 模型1: Top50因子
+2026-04-18 02:55:31,563 [clean.model_trainer] INFO - Top50: 训练=0, 测试=0, 特征=244
+2026-04-18 02:55:32,103 [clean.model_trainer] INFO - ============================================================
+2026-04-18 02:55:32,103 [clean.model_trainer] INFO - 模型2: Alpha158
+2026-04-18 02:57:01,915 [clean.data_manager] INFO - 加载Alpha158: (248100, 159)
+2026-04-18 02:57:02,216 [clean.model_trainer] INFO - Alpha158: 训练=144710, 测试=73326, 特征=158
+2026-04-18 02:58:14,195 [pipeline] INFO - ============================================================
+2026-04-18 02:58:14,196 [pipeline] INFO - Step 4: 模型对比
+2026-04-18 02:58:19,915 [clean.data_manager] INFO - qlib初始化完成
+2026-04-18 02:59:50,218 [clean.data_manager] INFO - 加载Alpha158: (248100, 159)
+2026-04-18 02:59:50,261 [clean.data_manager] INFO - 共同股票池: 433只
+2026-04-18 02:59:50,261 [clean.model_trainer] INFO - ============================================================
+2026-04-18 02:59:50,261 [clean.model_trainer] INFO - 模型1: Top50因子
+2026-04-18 03:00:07,148 [clean.model_trainer] INFO - Top50: 训练=0, 测试=0, 特征=244
+2026-04-18 03:00:07,621 [clean.model_trainer] INFO - ============================================================
+2026-04-18 03:00:07,622 [clean.model_trainer] INFO - 模型2: Alpha158
+2026-04-18 03:01:37,877 [clean.data_manager] INFO - 加载Alpha158: (248100, 159)
+2026-04-18 03:01:38,710 [clean.model_trainer] INFO - Alpha158: 训练=145529, 测试=73464, 特征=158
+2026-04-18 03:02:54,808 [pipeline] INFO - ============================================================
+2026-04-18 03:02:54,810 [pipeline] INFO - Step 4: 模型对比
+2026-04-18 03:03:00,486 [clean.data_manager] INFO - qlib初始化完成
+2026-04-18 03:04:29,771 [clean.data_manager] INFO - 加载Alpha158: (248100, 159)
+2026-04-18 03:04:29,816 [clean.data_manager] INFO - 共同股票池: 433只
+2026-04-18 03:04:29,816 [clean.model_trainer] INFO - ============================================================
+2026-04-18 03:04:29,816 [clean.model_trainer] INFO - 模型1: Top50因子
+2026-04-18 03:04:48,450 [clean.model_trainer] INFO - Top50: 训练=202589, 测试=105725, 特征=244
+2026-04-18 03:05:40,150 [clean.model_trainer] INFO - ============================================================
+2026-04-18 03:05:40,150 [clean.model_trainer] INFO - 模型2: Alpha158
+2026-04-18 03:07:11,657 [clean.data_manager] INFO - 加载Alpha158: (248100, 159)
+2026-04-18 03:07:12,320 [clean.model_trainer] INFO - Alpha158: 训练=145529, 测试=73464, 特征=158
+2026-04-18 03:07:35,840 [pipeline] INFO -   对比结果:
+2026-04-18 03:07:35,840 [pipeline] INFO -     Top50: ICIR=0.1513, RankICIR=0.2118, 训练样本=202589, 测试样本=105725
+2026-04-18 03:07:35,840 [pipeline] INFO -     Alpha158: ICIR=-0.0010, RankICIR=0.0044, 训练样本=145529, 测试样本=73464
+2026-04-18 03:09:08,265 [pipeline] INFO - ============================================================
+2026-04-18 03:09:08,266 [pipeline] INFO - Step 4: 模型对比
+2026-04-18 03:09:13,930 [clean.data_manager] INFO - qlib初始化完成
+2026-04-18 03:10:44,028 [clean.data_manager] INFO - 加载Alpha158: (248100, 159)
+2026-04-18 03:10:44,070 [clean.data_manager] INFO - 共同股票池: 433只
+2026-04-18 03:10:44,506 [clean.model_trainer] INFO - 共同股票池: 433只, 共同交易日: 827天
+2026-04-18 03:10:44,506 [clean.model_trainer] INFO - Top50过滤后: 350928条
+2026-04-18 03:10:44,506 [clean.model_trainer] INFO - Alpha158过滤后: 248100条
+2026-04-18 03:10:44,506 [clean.model_trainer] INFO - ============================================================
+2026-04-18 03:10:44,506 [clean.model_trainer] INFO - 模型1: Top50因子
+2026-04-18 03:11:55,313 [clean.model_trainer] INFO - ============================================================
+2026-04-18 03:11:55,314 [clean.model_trainer] INFO - 模型2: Alpha158
+2026-04-18 03:12:19,607 [pipeline] INFO -   对比结果:
+2026-04-18 03:12:19,607 [pipeline] INFO -     Top50: ICIR=0.1513, RankICIR=0.2118, 训练样本=202589, 测试样本=105725
+2026-04-18 03:12:19,608 [pipeline] INFO -     Alpha158: ICIR=-0.0010, RankICIR=0.0044, 训练样本=145529, 测试样本=73464
+2026-04-18 03:16:32,975 [pipeline] INFO - ============================================================
+2026-04-18 03:16:32,975 [pipeline] INFO - Step 4: 模型对比
+2026-04-18 03:16:38,674 [clean.data_manager] INFO - qlib初始化完成
+2026-04-18 03:18:09,309 [clean.data_manager] INFO - 加载Alpha158: (248100, 159)
+2026-04-18 03:18:09,354 [clean.data_manager] INFO - 共同股票池: 433只
+2026-04-18 03:18:09,783 [clean.model_trainer] INFO - 共同股票池: 433只, 共同交易日: 827天
+2026-04-18 03:18:09,784 [clean.model_trainer] INFO - Top50过滤后: 350928条
+2026-04-18 03:18:09,784 [clean.model_trainer] INFO - Alpha158过滤后: 248100条
+2026-04-18 03:18:09,784 [clean.model_trainer] INFO - ============================================================
+2026-04-18 03:18:09,785 [clean.model_trainer] INFO - 模型1: Top50因子
+2026-04-18 03:19:22,259 [clean.model_trainer] INFO - ============================================================
+2026-04-18 03:19:22,259 [clean.model_trainer] INFO - 模型2: Alpha158
+2026-04-18 03:19:47,371 [pipeline] INFO -   对比结果:
+2026-04-18 03:19:47,371 [pipeline] INFO -     Top50: ICIR=0.1513, RankICIR=0.2118, 训练样本=202589, 测试样本=105725
+2026-04-18 03:19:47,371 [pipeline] INFO -     Alpha158: ICIR=0.3999, RankICIR=0.5168, 训练样本=145354, 测试样本=73479

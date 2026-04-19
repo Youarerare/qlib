@@ -1,0 +1,94 @@
+alignment:
+  drop_any_nan: true
+  label_horizon: 1
+  mad_threshold: 3.0
+  min_consecutive_days: 60
+  unified_end_time: '2023-06-01'
+  unified_fit_end_time: '2022-01-01'
+  unified_fit_start_time: '2020-01-01'
+  unified_freq: day
+  unified_instruments: csi300
+  unified_start_time: '2020-01-01'
+  zscore_clip: 3.0
+alpha158:
+  default_end_time: '2023-06-01'
+  default_freq: day
+  default_instruments: csi300
+  default_start_time: '2020-01-01'
+  feature_source: qlib_expression
+  handler_class: Alpha158
+  handler_module: qlib.contrib.data.handler
+  infer_processors: []
+  label_formula: Ref($close, -2)/Ref($close, -1) - 1
+  learn_processors:
+  - class: DropnaLabel
+  - class: CSZScoreNorm
+    kwargs:
+      fields_group: label
+  max_history_window: 60
+  process_type: append
+  rolling_windows:
+  - 5
+  - 10
+  - 20
+  - 30
+  - 60
+  yaml_path: examples/benchmarks/LightGBM/workflow_config_lightgbm_Alpha158.yaml
+alpha50:
+  default_end_time: '2023-06-01'
+  default_freq: day
+  default_instruments: csi300
+  default_start_time: '2020-01-01'
+  feature_source: precomputed_pickle
+  handler_class: TopkAlphaHandler
+  handler_module: examples.alpha_factor_test.topk_alpha_handler
+  infer_processors:
+  - class: DropnaLabel
+  - class: CSZScoreNorm
+    kwargs:
+      fields_group: feature
+  label_formula: pct_change(1).shift(-1)
+  learn_processors:
+  - class: DropnaLabel
+  - class: CSZScoreNorm
+    kwargs:
+      fields_group: label
+  max_history_window: 180
+  pickle_path: examples/alpha_factor_test/top50_features.pkl
+  process_type: append
+  rolling_windows:
+  - 5
+  - 10
+  - 15
+  - 20
+  - 30
+  - 40
+  - 50
+  - 60
+  - 80
+  - 120
+  - 150
+  - 180
+  yaml_path: examples/alpha_factor_test/workflow_config_xgboost_top50.yaml
+followup:
+  lgbm_params:
+    learning_rate: 0.1
+    metric: mse
+    num_leaves: 64
+    num_threads: 4
+    objective: regression
+    verbose: -1
+  model_type: lightgbm
+  rolling_refit_months: 6
+  test_period_months: 12
+  train_years_3: 3
+  train_years_6: 6
+output:
+  base_dir: sample_alignment_study/output
+  data_dir: sample_alignment_study/output/data
+  figure_dir: sample_alignment_study/output/figures
+  log_dir: sample_alignment_study/output/logs
+  report_dir: sample_alignment_study/output/reports
+qlib_init:
+  provider_uri: ~/.qlib/qlib_data/cn_data
+  region: cn
